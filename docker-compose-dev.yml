@@ -1,0 +1,114 @@
+services:
+  ########################################## stanza-http ###########################################
+  stanza-http:
+    container_name: 'stanza-http-dev'
+    image: 'stanza-http-dev:${STANZA_VERSION}'
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: deploy/dockerfiles/Dockerfile-dev-http
+      args:
+        GOLANG_VERSION: ${GOLANG_VERSION}
+    environment:
+      # stanza-http configuration settings
+      - SERVICE_LISTENER=0.0.0.0
+      - SERVICE_PORT=9001
+      - SERVICE_HOST=stanza-http-dev
+      - SERVICE_CALLBACKS_PORT=9001
+      - SERVICE_TOKEN=${STANZA_TOKEN}
+      # Database settings
+      - DB_HOST=stanza-postgres-dev
+      - DB_NAME=${POSTGRES_DB_NAME}
+      - DB_PORT=${POSTGRES_DB_PORT}
+      - DB_USER=${POSTGRES_DB_USERNAME}
+      - DB_PASS=${POSTGRES_DB_PASSWORD}
+    networks:
+      - stanza-dev-backend
+    ports:
+      - 127.0.0.1:9001:9001
+    volumes:
+      - .:/usr/src/app:rw,delegated
+    depends_on:
+      - stanza-postgres
+
+
+  ########################################## stanza-admin ##########################################
+  stanza-admin:
+    container_name: 'stanza-admin-dev'
+    image: 'stanza-admin-dev:${STANZA_VERSION}'
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: deploy/dockerfiles/Dockerfile-dev-admin
+      args:
+        GOLANG_VERSION: ${GOLANG_VERSION}
+    environment:
+      # stanza-admin configuration settings ####
+      - SERVICE_LISTENER=0.0.0.0
+      - SERVICE_PORT=9002
+      - SERVICE_HOST=stanza-admin-dev
+      # Database settings
+      - DB_HOST=stanza-postgres-dev
+      - DB_PORT=${POSTGRES_DB_PORT}
+      - DB_NAME=${POSTGRES_DB_NAME}
+      - DB_USER=${POSTGRES_DB_USERNAME}
+      - DB_PASS=${POSTGRES_DB_PASSWORD}
+    networks:
+      - stanza-dev-backend
+    ports:
+      - 127.0.0.1:9002:9002
+    volumes:
+      - .:/usr/src/app:rw,delegated
+    depends_on:
+      - stanza-postgres
+
+
+  ########################################### PostgreSQL ###########################################
+  stanza-postgres:
+    container_name: 'stanza-postgres-dev'
+    image: postgres:${POSTGRES_VERSION}
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB_NAME}
+      - POSTGRES_USER=${POSTGRES_DB_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_DB_PASSWORD}
+    networks:
+      - stanza-dev-backend
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - postgres-dev-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_DB_USERNAME} -d ${POSTGRES_DB_NAME}'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  ######################################### stanza agent ###########################################
+  stanza-agent:
+    container_name: 'stanza-agent-dev'
+    image: 'stanza-agent-dev:${STANZA_VERSION}'
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: deploy/dockerfiles/Dockerfile-dev-agent
+      args:
+        GOLANG_VERSION: ${GOLANG_VERSION}
+    environment:
+      # HTTP server settings
+      - CALLBACKS_URL=${STANZA_URL}
+      - STANZA_TOKEN=${STANZA_TOKEN}
+      - STANZA_UUID=${STANZA_UUID}
+    networks:
+      - stanza-dev-backend
+    volumes:
+      - .:/usr/src/app:rw,delegated
+    depends_on:
+      - stanza-http
+
+networks:
+  stanza-dev-backend:
+
+volumes:
+  postgres-dev-db:

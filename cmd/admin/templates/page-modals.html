@@ -1,0 +1,256 @@
+{{ define "page-modals" }}
+
+    <!-- MODALS -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="exit_modal" tabindex="-1" role="dialog" aria-labelledby="exitModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="exitModalLabel">Exit</h4>
+          </div>
+          <div class="modal-body alert alert-warning">
+            <p>Are you sure you want to confirm?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="exit_button btn btn-primary btn-danger">Confirm</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="lock_modal" tabindex="-1" role="dialog" aria-labelledby="lockModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="lockModalLabel">Lock</h4>
+          </div>
+          <div class="modal-body alert alert-warning">
+            <p>Are you sure you want to lock this machine?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="lock_button btn btn-primary btn-danger">Confirm</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="sleep_modal" tabindex="-1" role="dialog" aria-labelledby="sleepModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="sleepModalLabel">Set Sleep Duration</h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal">
+              <div class="form-group row" style="padding-bottom:5px;">
+                <label for="sleep_seconds" class="col-xs-1">Sleep</label>
+                <div class="col-xs-10">
+                  <input id="sleep_seconds" type="text" class="form-control">
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="sleep_button btn btn-primary btn-warning" data-dismiss="modal">Sleep</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="command_modal" tabindex="-1" role="dialog" aria-labelledby="commandModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="commandModalLabel">Run Command</h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" autocomplete="off">
+              <div class="form-group row" style="padding-bottom:5px;">
+                <label for="commands" class="col-xs-1">Run</label>
+                <div class="col-xs-10">
+                  <input id="commands" type="text" class="form-control">
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="command_button btn btn-primary" data-dismiss="modal">Execute</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="deleteModalLabel">Delete File</h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal">
+              <div class="form-group row" style="padding-bottom:5px;">
+                <label for="delete_file" class="col-xs-1">File</label>
+                <div class="col-xs-10">
+                  <input id="delete_file" type="text" class="form-control">
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="delete_button btn btn-primary btn-danger" data-dismiss="modal">Delete</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="get_modal" tabindex="-1" role="dialog" aria-labelledby="getModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="getModalLabel">Get File from Target</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group row" style="padding-bottom:5px;">
+              <label for="get_file" class="col-xs-1 col-form-label">File</label>
+              <div class="col-xs-10">
+                <input id="get_file" type="text" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="get_button btn btn-primary" data-dismiss="modal">Get</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="put_modal" tabindex="-1" role="dialog" aria-labelledby="putModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="putModalLabel">Put File in Target</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group row" style="padding-bottom:5px;">
+              <label for="put_url" class="col-xs-1 col-form-label">URL</label>
+              <div class="col-xs-10">
+                <input id="put_url" type="text" class="form-control">
+              </div>
+            </div>
+            <div class="form-group row" style="padding-bottom:5px;">
+              <label for="put_file" class="col-xs-1 col-form-label">File</label>
+              <div class="col-xs-10">
+                <input id="put_file" type="text" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="put_button btn btn-primary" data-dismiss="modal">Put</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="cycles_modal" tabindex="-1" role="dialog" aria-labelledby="cyclesModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="cyclesModalLabel">Set Cycles</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group row" style="padding-bottom:5px;">
+              <label for="setting_name" class="col-xs-1 col-form-label">Name</label>
+              <div class="col-xs-10">
+                <select class="form-control" id="setting_name">
+                  <option value="STZ_MIN">CycleMin</option>
+                  <option value="STZ_MAX">CycleMax</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group row" style="padding-bottom:5px;">
+              <label for="setting_value" class="col-xs-1 col-form-label">Value</label>
+              <div class="col-xs-10">
+                <input id="setting_value" type="text" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="change_button btn btn-primary" data-dismiss="modal">Change</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="warningModalLabel">No Selection</h4>
+          </div>
+          <div class="modal-body">
+            <p id="warningModalMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="confirmModalLabel">Confirm Action</h4>
+          </div>
+          <div class="modal-body">
+            <p id="confirmModalMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button id="confirm_action" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{{ end }}

@@ -1,0 +1,36 @@
+# OS generated files #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Directories to ignore
+bin
+build
+.vscode
+tmp
+
+# Logs
+*.log
+
+# Binaries
+stzagent
+stzagent32
+stzhttp
+stztcp
+stzudp
+stzadmin
+*-linux*
+*-osx
+*-win*.exe
+*-bsd*
+
+# Configuration files
+*.json
+
+# Docker files
+.env
+
+# Notes
+notes.txt

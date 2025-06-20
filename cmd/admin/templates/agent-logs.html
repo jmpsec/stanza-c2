@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{{ template "page-head" . }}
+
+<body class="hold-transition skin-red sidebar-mini">
+  <div class="wrapper">
+
+    {{ template "page-header" . }}
+
+    {{ template "page-sidebar" . }}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <h1>
+          Agent Logs
+          <small>So much action...</small>
+        </h1>
+      </section>
+
+      <!-- Main content -->
+      <section class="content">
+        <div class="box">
+          <div class="box-header">
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body" id="assetContainer">
+            <center>
+              <img src="/static/img/soon.jpg">
+            </center>
+          </div>
+
+          <!-- /.box-body -->
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    {{ template "page-footer" . }}
+
+    {{ template "page-modals" . }}
+
+    {{ template "page-js" . }}
+
+    <!-- Agents Table JS -->
+    <script type="text/javascript" language="javascript">
+      $(document).ready(function () {
+        // This is bad
+        $.fn.dataTable.ext.errMode = 'none';
+        var agentsTable = $('#agentsTable').DataTable({
+          select: {
+            style: 'os',
+            selector: 'td:first-child'
+          },
+          searching: true,
+          dom: 'lfrtipB',
+          processing: true,
+          ajax: "/json/agents",
+          columns: [{
+              "data": "checkbox"
+            },
+            {
+              "data": "uuid"
+            },
+            {
+              "data": "username"
+            },
+            {
+              "data": "hostname"
+            },
+            {
+              "data": "ip"
+            },
+            {
+              "data": "platform"
+            },
+            {
+              "data": "version"
+            },
+            {
+              "data": "timeago"
+            }
+          ],
+          columnDefs: [{
+            targets: 0,
+            className: 'select-checkbox',
+            width: '1%',
+            data: 'checkbox',
+            searchable: false,
+            orderable: false,
+          }, {
+            targets: 1,
+            width: '26%',
+            data: 'uuid',
+            render: function (data, type, row, meta) {
+              if (type === 'display') {
+                return '<a href="/agent/' + data + '">' + data + '</a>';
+              } else {
+                return data;
+              }
+            }
+          }, {
+            targets: 5,
+            data: 'platform',
+            width: '5%',
+            render: function (data, type, row, meta) {
+              if (type === 'display') {
+                switch (true) {
+                  case data.toLowerCase().includes("ubuntu"):
+                    return '<i class="fl-ubuntu-inverse"></i> ubuntu';
+                  case data.toLowerCase().includes("debian"):
+                    return '<i class="fl-debian"></i> debian';
+                  case data.toLowerCase().includes("unknown"):
+                    return '<i class="fa fa-question-circle"></i> unknown';
+                  case data.toLowerCase().includes("darwin"):
+                    return '<i class="fa fa-apple"></i> darwin';
+                  case data.toLowerCase().includes("centos"):
+                    return '<i class="fl-centos"></i> centos';
+                  case data.toLowerCase().includes("rhel"):
+                    return '<i class="fl-redhat"></i> redhat';
+                  case data.toLowerCase().includes("fedora"):
+                    return '<i class="fl-fedora"></i> fedora';
+                  case data.toLowerCase().includes("windows"):
+                    return '<i class="fa fa-windows"></i> windows';
+                  case data.toLowerCase().includes("freebsd"):
+                    return '<i class="fl-freebsd"></i> freebsd';
+                  case data.toLowerCase().includes("opensuse"):
+                    return '<i class="fl-opensuse"></i> opensuse';
+                }
+              } else {
+                return data;
+              }
+            }
+          }],
+          buttons: [{
+              text: '<i class="fa fa-refresh"></i>',
+              titleAttr: 'Refresh Table',
+              action: function (e, dt, node, config) {
+                agentsTable.ajax.reload();
+              }
+            },
+            {
+              text: '<i class="fa fa-terminal"></i>',
+              titleAttr: 'Execute Command',
+              action: function (e, dt, node, config) {
+                var a = [];
+                $.each(agentsTable.rows('.selected').data(), function () {
+                  a.push(this);
+                });
+                var uuids = [];
+                for (var i = 0; i < a.length; i++) {
+                  uuids.push(a[i].uuid);
+                }
+                if (uuids.length > 0) {
+                  $("#commands").val('');
+                  $('#command_modal').modal('show');
+                  $('#command_modal .command_button').click(function () {
+                    var to_execute = $("#commands").val();
+                    if (to_execute.length > 0) {
+                      C2executeCommandMulti(uuids, to_execute);
+                    }
+                    $('#command_modal').modal('hide');
+                  });
+                  $('#command_modal').on('shown.bs.modal', function () {
+                    $('#commands').focus();
+                  });
+                  $(document).keypress(function (e) {
+                    if ($("#command_modal").hasClass('in') && (e.keycode == 13 || e.which == 13)) {
+                      $('#command_modal .command_button').click();
+                    }
+                  });
+                } else {
+                  $("#warningModalMessage").text("You must select one or more agents");
+                  $('#warningModal').modal();
+                  console.log('NO SELECTION');
+                }
+              }
+            },
+            {
+              text: '<i class="fa fa-download"></i>',
+              titleAttr: 'Get File',
+              action: function (e, dt, node, config) {
+                var a = [];
+                $.each(agentsTable.rows('.selected').data(), function () {
+                  a.push(this);
+                });
+                var uuids = [];
+                for (var i = 0; i < a.length; i++) {
+                  uuids.push(a[i].uuid);
+                }
+                if (uuids.length > 0) {
+                  $("#get_file").val('');
+                  $('#get_modal').modal('show');
+                  $('#get_modal .get_button').click(function () {
+                    var get_file = $("#get_file").val();
+                    C2getFileMulti(uuids, get_file);
+                    $('#get_modal').modal('hide');
+                  });
+                  $('#get_modal').on('shown.bs.modal', function () {
+                    $('#get_file').focus();
+                  });
+                  $(document).keypress(function (e) {
+                    if ($("#get_modal").hasClass('in') && (e.keycode == 13 || e.which == 13)) {
+                      $('#get_modal .get_button').click();
+                    }
+                  });
+                } else {
+                  $("#warningModalMessage").text("You must select one or more agents");
+                  $('#warningModal').modal();
+                  console.log('NO SELECTION');
+                }
+              }
+            },
+            {
+              text: '<i class="fa fa-upload"></i>',
+              titleAttr: 'Put File',
+              action: function (e, dt, node, config) {
+                var a = [];
+                $.each(agentsTable.rows('.selected').data(), function () {
+                  a.push(this);
+                });
+                var uuids = [];
+                for (var i = 0; i < a.length; i++) {
+                  uuids.push(a[i].uuid);
+                }
+                if (uuids.length > 0) {
+                  $("#put_url").val('');
+                  $("#put_file").val('');
+                  $('#put_modal').modal('show');
+                  $('#put_modal .put_button').click(function () {
+                    var put_url = $("#put_url").val();
+                    var put_file = $("#put_file").val();
+                    if (put_url.length > 0 && put_file.length > 0) {
+                      C2putFileMulti(uuids, put_url, put_file);
+                    }
+                    $('#put_modal').modal('hide');
+                  });
+                  $('#put_modal').on('shown.bs.modal', function () {
+                    $('#put_url').focus();
+                  });
+                  $(document).keypress(function (e) {
+                    if ($("#put_modal").hasClass('in') && (e.keycode == 13 || e.which == 13)) {
+                      $('#put_modal .put_button').click();
+                    }
+                  });
+                } else {
+                  $("#warningModalMessage").text("You must select one or more agents");
+                  $('#warningModal').modal();
+                  console.log('NO SELECTION');
+                }
+              }
+            },
+            {
+              text: '<i class="fa fa-trash"></i>',
+              titleAttr: 'Delete File',
+              action: function (e, dt, node, config) {
+                var a = [];
+                $.each(agentsTable.rows('.selected').data(), function () {
+                  a.push(this);
+                });
+                var uuids = [];
+                for (var i = 0; i < a.length; i++) {
+                  uuids.push(a[i].uuid);
+                }
+                if (uuids.length > 0) {
+                  $("#delete_file").val('');
+                  $('#delete_modal').modal('show');
+                  $('#delete_modal .delete_button').click(function () {
+                    $('#delete_modal').modal('hide');
+                    var to_delete = $("#delete_file").val();
+                    C2deleteFileMulti(uuids, to_delete);
+                  });
+                  $('#delete_modal').on('shown.bs.modal', function () {
+                    $('#delete_file').focus();
+                  });
+                  $(document).keypress(function (e) {
+                    if ($("#delete_modal").hasClass('in') && (e.keycode == 13 || e.which == 13)) {
+                      $('#delete_modal .delete_button').click();
+                    }
+                  });
+                } else {
+                  $("#warningModalMessage").text("You must select one or more agents");
+                  $('#warningModal').modal();
+                  console.log('NO SELECTION');
+                }
+              }
+            },
+            {
+              text: '<i class="fa fa-hourglass-half"></i>',
+              titleAttr: 'Set Cycles',
+              action: function (e, dt, node, config) {
+                var a = [];
+                $.each(agentsTable.rows('.selected').data(), function () {
+                  a.push(this);
+                });
+                var uuids = [];
+                for (var i = 0; i < a.length; i++) {
+                  uuids.push(a[i].uuid);
+                }
+                if (uuids.length > 0) {
+                  $("#setting_value").val('');
+                  $('#cycles_modal').modal('show');
+                  $('#cycles_modal .change_button').click(function () {
+                    $('#cycles_modal').modal('hide');
+                    var to_change_name = $("#setting_name").val();
+                    var to_change_value = $("#setting_value").val();
+                    C2setValueMulti(uuids, to_change_name, to_change_value);
+                  });
+                  $('#cycles_modal').on('shown.bs.modal', function () {
+                    $('#setting_name').focus();
+                  });
+                  $(document).keypress(function (e) {
+                    if ($("#cycles_modal").hasClass('in') && (e.keycode == 13 || e.which == 13)) {
+                      $('#cycles_modal .change_button').click();
+                    }
+                  });
+                } else {
+                  $("#warningModalMessage").text("You must select one or more agents");
+                  $('#warningModal').modal();
+                  console.log('NO SELECTION');
+                }
+              }
+            },
+            {
+              text: '<i class="fa fa-pause"></i>',
+              titleAttr: 'Sleep Agent',
+              action: function (e, dt, node, config) {
+                var a = [];
+                $.each(agentsTable.rows('.selected').data(), function () {
+                  a.push(this);
+                });
+                var uuids = [];
+                for (var i = 0; i < a.length; i++) {
+                  uuids.push(a[i].uuid);
+                }
+                if (uuids.length > 0) {
+                  $("#sleep_seconds").val('');
+                  $('#sleep_modal').modal('show');
+                  $('#sleep_modal .sleep_button').click(function () {
+                    $('#sleep_modal').modal('hide');
+                    var to_sleep = $("#sleep_seconds").val();
+                    C2sleepAgentMulti(uuids, to_sleep);
+                  });
+                  $('#sleep_modal').on('shown.bs.modal', function () {
+                    $('#sleep_seconds').focus();
+                  });
+                } else {
+                  $("#warningModalMessage").text("You must select one or more agents");
+                  $('#warningModal').modal();
+                  console.log('NO SELECTION');
+                }
+              }
+            },
+            {
+              text: '<i class="fa fa-sign-out"></i>',
+              titleAttr: 'Kill Agent',
+              action: function (e, dt, node, config) {
+                var a = [];
+                $.each(agentsTable.rows('.selected').data(), function () {
+                  a.push(this);
+                });
+                var uuids = [];
+                for (var i = 0; i < a.length; i++) {
+                  uuids.push(a[i].uuid);
+                }
+                if (uuids.length > 0) {
+                  $('#exit_modal').modal('show');
+                  $('#exit_modal .exit_button').click(function () {
+                    $('#exit_modal').modal('hide');
+                    C2killAgentMulti(uuids);
+                  });
+                } else {
+                  $("#warningModalMessage").text("You must select one or more agents");
+                  $('#warningModal').modal();
+                  console.log('NO SELECTION');
+                }
+              }
+            }/*,
+            {
+              text: '<i class="fa fa-lock"></i>',
+              titleAttr: 'Lock Machine',
+              action: function (e, dt, node, config) {
+                var a = [];
+                $.each(agentsTable.rows('.selected').data(), function () {
+                  a.push(this);
+                });
+                var uuids = [];
+                for (var i = 0; i < a.length; i++) {
+                  uuids.push(a[i].uuid);
+                }
+                if (uuids.length > 0) {
+                  $('#lock_modal').modal('show');
+                  $('#lock_modal .lock_button').click(function () {
+                    $('#lock_modal').modal('hide');
+                    C2lockMachineMulti(uuids);
+                  });
+                } else {
+                  $("#warningModalMessage").text("You must select one or more agents");
+                  $('#warningModal').modal();
+                  console.log('NO SELECTION');
+                }
+              }
+            }*/
+          ]
+        });
+        // Select and deselect all
+        agentsTable.on("click", "th.select-checkbox", function () {
+          if ($("th.select-checkbox").hasClass("selected")) {
+            agentsTable.rows().deselect();
+            $("th.select-checkbox").removeClass("selected");
+          } else {
+            agentsTable.rows().select();
+            $("th.select-checkbox").addClass("selected");
+          }
+        }).on("select deselect", function () {
+          ("Some selection or deselection going on")
+          if (agentsTable.rows({
+              selected: true
+            }).count() !== agentsTable.rows().count()) {
+            $("th.select-checkbox").removeClass("selected");
+          } else {
+            $("th.select-checkbox").addClass("selected");
+          }
+        });
+
+        // Auto-refresh table
+        setInterval(function () {
+          agentsTable.ajax.reload();
+        }, 30000);
+      });
+    </script>
+
+    <!-- Optionally, you can add Slimscroll and FastClick plugins.
+      Both of these plugins are recommended to enhance the
+      user experience. -->
+</body>
+
+</html>

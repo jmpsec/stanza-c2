@@ -1,0 +1,37 @@
+######################################## stanza-dev-base ########################################
+ARG GOLANG_VERSION=${GOLANG_VERSION:-1.24.3}
+FROM golang:${GOLANG_VERSION} AS stanza-admin-dev
+
+WORKDIR /usr/src/app
+
+ENV GO111MODULE="on"
+ENV GOOS="linux"
+ENV CGO_ENABLED=0
+
+# Copy code
+COPY . /usr/src/app
+
+# Download deps
+RUN go mod download
+RUN go mod verify
+
+# Create directories for binaries and configuration
+RUN mkdir -p /opt/stanza/bin
+RUN mkdir -p /opt/stanza/config
+
+# Copy osctrl-admin web templates
+COPY cmd/admin/templates/ /opt/stanza/templates
+COPY cmd/admin/static/ /opt/stanza/static
+COPY deploy/config/admin.json /opt/stanza/config/admin.json
+RUN go build -o /opt/stanza/bin/stzadmin cmd/admin/*.go
+
+EXPOSE 9002
+
+# Entrypoint
+COPY deploy/scripts/entrypoint_admin.sh /entrypoint.sh
+RUN chmod 755 /entrypoint.sh
+
+ENTRYPOINT [ "/entrypoint.sh" ]
+
+#ENTRYPOINT ["/opt/stanza/bin/stzadmin", "-config=/opt/stanza/config/admin.json"]
+

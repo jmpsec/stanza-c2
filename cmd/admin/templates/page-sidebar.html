@@ -1,0 +1,42 @@
+{{ define "page-sidebar" }}
+
+    <!-- SIDEBAR -->
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+      <section class="sidebar">
+        <!-- Sidebar Menu -->
+        <div class="user-panel">
+          <div class="image">
+            <img id="spin_stanza" src="/static/img/stanzad.png" class="img-circle img-responsive center-block"
+              alt="User Image">
+          </div>
+          <div class="pull-left info">
+            <p></p>
+          </div>
+        </div>
+        <ul class="sidebar-menu" data-widget="tree">
+          <li class="{{ .AgentsActiveClass }}"><a href="/agents">
+            <i class="fa fa-plug"></i><span>Active Agents</span></a>
+          </li>
+          <li class="{{ .CallbacksActiveClass }}">
+            <a href="/callbacks"><i class="fa fa-phone"></i> <span>Callbacks</span></a>
+          </li>
+          <li class="{{ .CommandsActiveClass }}">
+            <a href="/commands"><i class="fa fa-terminal"></i> <span>Commands</span></a>
+          </li>
+          <li class="{{ .AgentLogsActiveClass }}">
+            <a href="/agent-logs"><i class="fa fa-book"></i> <span>Agent Logs</span></a>
+          </li>
+          <li class="{{ .CommandLogsActiveClass }}">
+            <a href="/command-logs"><i class="fa fa-database"></i> <span>Command Logs</span></a>
+          </li>
+          <li class="{{ .FilesActiveClass }}">
+            <a href="/files-oneliners"><i class="fa fa-files-o"></i> <span>Files / Oneliners</span></a>
+          </li>
+        </ul>
+        <!-- /.sidebar-menu -->
+      </section>
+      <!-- /.sidebar -->
+    </aside>
+
+{{ end }}
