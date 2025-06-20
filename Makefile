@@ -69,7 +69,8 @@ udp:
 
 # Build all agents
 agents:
-	make agent_osx
+	make agent_osx_intel
+	make agent_osx_arm
 	make agent_freebsd64
 	make agent_freebsd32
 	make agent_linux64
@@ -77,10 +78,37 @@ agents:
 	make agent_windows64
 	make agent_windows32
 
-# Build the agent for OSX
-agent_osx:
+# Build the agent for OSX Intel 64-bit
+agent_osx_intel:
 	GOOS=darwin GOARCH=amd64 go build -o $(OUTPUT)/$(AGENT_OSX) $(AGENT_CODE)
 
+# Build the agent for OSX ARM 64-bit
+agent_osx_arm:
+	GOOS=darwin GOARCH=arm64 go build -o $(OUTPUT)/$(AGENT_OSX) $(AGENT_CODE)
+
+# Build the agent for FreeBSD 64-bit
+agent_freebsd64:
+	GOOS=freebsd GOARCH=amd64 go build -o $(OUTPUT)/$(AGENT_BSD64) $(AGENT_CODE)
+
+# Build the agent for FreeBSD 32-bit
+agent_freebsd32:
+	GOOS=freebsd GOARCH=386 go build -o $(OUTPUT)/$(AGENT_BSD32) $(AGENT_CODE)
+
+# Build the agent for Linux 64-bit
+agent_linux64:
+	GOOS=linux GOARCH=amd64 go build -o $(OUTPUT)/$(AGENT_LNX64) $(AGENT_CODE)
+
+# Build the agent for Linux 32-bit
+agent_linux32:
+	GOOS=linux GOARCH=386 go build -o $(OUTPUT)/$(AGENT_LNX32) $(AGENT_CODE)
+
+# Build the agent for Windows 64-bit
+agent_windows64:
+	GOOS=windows GOARCH=amd64 go build -o $(OUTPUT)/$(AGENT_WIN64) $(AGENT_CODE)
+
+# Build the agent for Windows 32-bit
+agent_windows32:
+	GOOS=windows GOARCH=386 go build -o $(OUTPUT)/$(AGENT_WIN32) $(AGENT_CODE)
 
 # Build dev docker containers and run them (also generates new certificates)
 docker_dev_build:

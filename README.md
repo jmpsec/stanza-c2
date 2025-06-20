@@ -35,7 +35,8 @@ These are all the agent targets you can build:
 * ``make agent_linux64``
 * ``make agent_windows32``
 * ``make agent_windows64``
-* ``make agent_osx``
+* ``make agent_osx_intel``
+* ``make agent_osx_arm``
 * ``make agent_freebsd32``
 * ``make agent_freebsd64``
 
