@@ -69,7 +69,7 @@ func registerHTTPHandler(w http.ResponseWriter, r *http.Request) {
 		entry := agents.AgentLog{
 			UUID:   agent.UUID,
 			IPsrc:  ip,
-			Action: "STZ_UPDATE",
+			Action: types.StzActionUpdate,
 			Data:   string(body),
 		}
 		if err := stzAgents.Log(&entry); err != nil {
@@ -86,7 +86,7 @@ func registerHTTPHandler(w http.ResponseWriter, r *http.Request) {
 		entry := agents.AgentLog{
 			UUID:   agent.UUID,
 			IPsrc:  ip,
-			Action: "STZ_REGISTER",
+			Action: types.StzActionRegister,
 			Data:   string(body),
 		}
 		if err := stzAgents.Log(&entry); err != nil {
@@ -96,7 +96,7 @@ func registerHTTPHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	// Send response
-	httpRegisterResponse(w, "STZ_OK")
+	httpRegisterResponse(w, types.StzResponseOk)
 }
 
 // Handle HTTP beacon requests
@@ -124,7 +124,7 @@ func beaconHTTPHandler(w http.ResponseWriter, r *http.Request) {
 	if !e {
 		register := types.StzBeaconResponse{
 			ID:      0,
-			Action:  "STZ_REGISTER",
+			Action:  types.StzActionRegister,
 			Payload: "",
 		}
 		httpResponse(w, http.StatusOK, []types.StzBeaconResponse{register})
@@ -139,7 +139,7 @@ func beaconHTTPHandler(w http.ResponseWriter, r *http.Request) {
 	entry := agents.AgentLog{
 		UUID:   req.UUID,
 		IPsrc:  ip,
-		Action: "STZ_BEACON",
+		Action: types.StzStatusBeacon,
 		Data:   string(body),
 	}
 	if err := stzAgents.Log(&entry); err != nil {
@@ -177,8 +177,8 @@ func executionHTTPHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// Update the status in DB for that command, if it is valid
 	validStatus := map[string]bool{
-		"STZ_RECEIVED":      true,
-		types.StzStatusDone: true,
+		types.StzStatusReceived: true,
+		types.StzStatusDone:     true,
 	}
 	// Check if status is valid and update
 	if validStatus[req.Status] {
@@ -236,7 +236,7 @@ func callbacksHTTPHandler(w http.ResponseWriter, r *http.Request) {
 	entry := agents.AgentLog{
 		UUID:   req.UUID,
 		IPsrc:  ip,
-		Action: "STZ_CALLBACK",
+		Action: types.StzActionCallback,
 		Data:   string(body),
 	}
 	if err := stzAgents.Log(&entry); err != nil {

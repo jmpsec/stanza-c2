@@ -96,6 +96,7 @@ func sendHTTPRequest(reqType, url string, params io.Reader, headers map[string]s
 	tr := &http.Transport{}
 	if strings.HasPrefix(url, "https://") {
 		tr = &http.Transport{
+			// S 👏🏼 E 👏🏼 C 👏🏼 U 👏🏼 R 👏🏼 I 👏🏼 T 👏🏼 Y
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
 	}

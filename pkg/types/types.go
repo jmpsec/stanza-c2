@@ -10,6 +10,8 @@ const (
 
 // Actions
 const (
+	// StzActionCallback to return the callbacks
+	StzActionCallback = "STZ_CALLBACK"
 	// StzActionSet to change values for agents
 	StzActionSet = "STZ_SET"
 	// StzActionGet to get values from agents
@@ -22,6 +24,8 @@ const (
 	StzActionPut = "STZ_PUT"
 	// StzActionDelete to delete files in agents
 	StzActionDelete = "STZ_DELETE"
+	// StzActionUpdate to update an agent
+	StzActionUpdate = "STZ_UPDATE"
 	// StzActionLock to lock an agent
 	StzActionLock = "STZ_LOCK"
 	// StzActionSleep to make an agent dormant

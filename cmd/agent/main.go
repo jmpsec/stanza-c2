@@ -197,7 +197,7 @@ func agentFullRegistration() {
 		switch pl := cbk.Protocol; pl {
 		case _protoHTTPS, _protoHTTP:
 			reg, err := registerHTTPClient(cbk.Endpoints["register"], data)
-			if err != nil || reg.Response != "STZ_OK" && !_silence {
+			if err != nil || reg.Response != types.StzResponseOk && !_silence {
 				// TODO : This should be a retry
 				log.Println(err)
 			}
