@@ -133,3 +133,15 @@ docker_dev_down:
 # Deletes all osctrl docker images
 docker_dev_clean:
 	docker images | grep stanza | awk '{print $$3}' | xargs -rI {} docker rmi -f {}
+
+# Rebuilds the admin server
+docker_dev_rebuild_admin:
+	docker-compose -f docker-compose-dev.yml up --force-recreate --no-deps -d --build stanza-admin
+
+# Rebuilds the http server
+docker_dev_rebuild_http:
+	docker-compose -f docker-compose-dev.yml up --force-recreate --no-deps -d --build stanza-http
+
+# Rebuilds the agent container
+docker_dev_rebuild_agent:
+	docker-compose -f docker-compose-dev.yml up --force-recreate --no-deps -d --build stanza-agent
