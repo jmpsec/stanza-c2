@@ -100,6 +100,8 @@ services:
       - CALLBACKS_URL=${STANZA_URL}
       - STANZA_TOKEN=${STANZA_TOKEN}
       - STANZA_UUID=${STANZA_UUID}
+      - STANZA_MIN=${STANZA_MIN}
+      - STANZA_MAX=${STANZA_MAX}
     networks:
       - stanza-dev-backend
     volumes:
