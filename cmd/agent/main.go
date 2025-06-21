@@ -197,7 +197,7 @@ func agentFullRegistration() {
 	for _, cbk := range config.Callbacks {
 		switch pl := cbk.Protocol; pl {
 		case _protoHTTPS, _protoHTTP:
-			reg, err := registerHTTPClient(cbk.Endpoints["register"], data)
+			reg, err := registerHTTPClient(cbk.Endpoints[callbacks.RegisterEndpoint], data)
 			if err != nil || reg.Response != types.StzResponseOk && !_silence {
 				// TODO : This should be a retry
 				log.Println(err)
