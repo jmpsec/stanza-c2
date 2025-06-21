@@ -255,3 +255,16 @@ func callbacksHTTPHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(response)
 }
+
+// Handle HTTP agent files requests
+func filesHTTPHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("STZ: Files!\n")
+	requestDump, err := httputil.DumpRequest(r, true)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(string(requestDump))
+
+	// Send response
+	httpResponse(w, http.StatusOK, "File received")
+}

@@ -144,6 +144,7 @@ func main() {
 
 	// files
 	router.Handle("GET /files/", http.StripPrefix("/files", http.FileServer(http.Dir("./files"))))
+	router.HandleFunc("POST "+filesPath, filesHTTPHandler)
 
 	http.Handle("/", router)
 

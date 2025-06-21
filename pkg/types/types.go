@@ -14,7 +14,7 @@ const (
 	StzActionCallback = "STZ_CALLBACK"
 	// StzActionSet to change values for agents
 	StzActionSet = "STZ_SET"
-	// StzActionGet to get values from agents
+	// StzActionGet to get files from agents
 	StzActionGet = "STZ_GET"
 	// StzActionRegister to register agents
 	StzActionRegister = "STZ_REGISTER"
