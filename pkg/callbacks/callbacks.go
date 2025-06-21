@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	registerEndpoint  = "register"
-	beaconEndpoint    = "beacon"
-	callbacksEndpoint = "callbacks"
-	executionEndpoint = "execution"
-	filesEndpoint     = "files"
+	RegisterEndpoint  = "register"
+	BeaconEndpoint    = "beacon"
+	CallbacksEndpoint = "callbacks"
+	ExecutionEndpoint = "execution"
+	FilesEndpoint     = "files"
 )
 
 const (
@@ -30,11 +30,11 @@ const (
 )
 
 var _endpoints = map[string]string{
-	registerEndpoint:  registerPath,
-	beaconEndpoint:    beaconPath,
-	callbacksEndpoint: callbacksPath,
-	executionEndpoint: executionPath,
-	filesEndpoint:     filesPath,
+	RegisterEndpoint:  registerPath,
+	BeaconEndpoint:    beaconPath,
+	CallbacksEndpoint: callbacksPath,
+	ExecutionEndpoint: executionPath,
+	FilesEndpoint:     filesPath,
 }
 
 // Endpoint to keep the list of endpoints per callback

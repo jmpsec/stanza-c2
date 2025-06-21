@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jmpsec/stanza-c2/pkg/callbacks"
 	"github.com/jmpsec/stanza-c2/pkg/types"
 )
 
@@ -73,7 +74,7 @@ func registerHTTPClient(url string, data *types.StzRegistrationRequest) (types.S
 func sendHTTPExecution(url string, data types.StzExecutionStatus) error {
 	headers := map[string]string{
 		"Content-Type": "application/json",
-		"X-STZ-Verify": "Execution",
+		"X-STZ-Verify": callbacks.ExecutionEndpoint,
 	}
 	jsonOut, err := json.Marshal(data)
 	if err != nil {

