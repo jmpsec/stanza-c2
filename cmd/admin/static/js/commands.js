@@ -52,15 +52,13 @@ function C2setValueMulti(uuids, set_name, set_value) {
 function C2getFile(uuid, path) {
   // Format in payload is
   // "PATH_TO_GET"
-  var payload = url + '|' + path;
-  C2genericCommandAction('STZ_GET', payload, [uuid])
+  C2genericCommandAction("STZ_GET", path, [uuid]);
 }
 
 function C2getFileMulti(uuids, path) {
   // Format in payload is
   // "PATH_TO_GET"
-  var payload = url + '|' + path;
-  C2genericCommandAction('STZ_GET', payload, uuids)
+  C2genericCommandAction("STZ_GET", path, uuids);
 }
 
 function C2putFile(uuid, url, path) {
