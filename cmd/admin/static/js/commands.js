@@ -16,6 +16,12 @@ function sendPostRequest(req_data, req_url) {
   });
 }
 
+function C2DownloadFile(_fileid) {
+  var _url = "/download/" + _fileid;
+  location.href = _url;
+  console.log('Download file ' + _fileid);
+}
+
 function C2genericCommandAction(_action, _payload, _targets) {
   var _url = '/commands/' + _action;
   var data = {

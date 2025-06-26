@@ -237,9 +237,12 @@ func agentViewHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("error getting commands %v", err)
 		return
 	}
+	// Retrieve files
+	files, err := stzFiles.GetAll(uuid)
 	// Custom functions to handle formatting
 	funcMap := template.FuncMap{
-		"pastTimeAgo": pastTimeAgo,
+		"pastTimeAgo":   pastTimeAgo,
+		"payloadFormat": payloadFormat,
 	}
 	// Prepare template
 	t, err := template.New("agent.html").Funcs(funcMap).ParseFiles(
@@ -260,6 +263,7 @@ func agentViewHandler(w http.ResponseWriter, r *http.Request) {
 		Details:  agent,
 		Commands: commands,
 		Logs:     logs,
+		Files:    files,
 	}
 	// Execute template
 	if err := t.Execute(w, data); err != nil {

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/jmpsec/stanza-c2/pkg/agents"
 	"github.com/jmpsec/stanza-c2/pkg/commands"
+	"github.com/jmpsec/stanza-c2/pkg/files"
 	"github.com/jmpsec/stanza-c2/pkg/types"
 )
 
@@ -87,6 +88,7 @@ type AgentTemplateData struct {
 	Details                agents.Agent
 	Commands               []commands.Command
 	Logs                   []commands.CommandLog
+	Files                  []files.ExtractedFile
 }
 
 // AgentLogsTemplateData to be used with the template for agent logs

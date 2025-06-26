@@ -1,8 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"time"
+
+	"github.com/jmpsec/stanza-c2/pkg/commands"
+	"github.com/jmpsec/stanza-c2/pkg/files"
+	"github.com/jmpsec/stanza-c2/pkg/types"
 )
 
 // Constants for seconds
@@ -70,3 +75,14 @@ func pastTimeAgo(t time.Time) string {
 	return stringifyTime(seconds) + " ago"
 }
 
+// Helper to format the payload based on the type
+func payloadFormat(cmd commands.Command, cmdFiles []files.ExtractedFile) string {
+	if cmd.Action == types.StzActionGet {
+		for _, cmdFile := range cmdFiles {
+			if cmdFile.CommandID == cmd.ID && cmdFile.Verified && cmdFile.Extracted {
+				return fmt.Sprintf("%d", cmdFile.ID)
+			}
+		}
+	}
+	return cmd.Payload
+}
