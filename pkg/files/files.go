@@ -21,6 +21,7 @@ type ExtractedFile struct {
 	UUID      string `gorm:"index"`
 	Fullname  string
 	Size      int64
+	ExfilSize int64
 	MD5       string
 	B64Data   string
 	Verified  bool
@@ -50,6 +51,7 @@ func (f *FileManager) New(r *types.StzFileRequest) *ExtractedFile {
 		UUID:      r.UUID,
 		Fullname:  r.Fullname,
 		Size:      r.Size,
+		ExfilSize: r.ExfilSize,
 		MD5:       r.MD5,
 		B64Data:   r.B64Data,
 		Verified:  false,
@@ -72,9 +74,6 @@ func (f *FileManager) VerifyExtract(file *ExtractedFile) ([]byte, error) {
 	}
 	if file.UUID == "" {
 		return data, fmt.Errorf("File %s has no UUID", file.Fullname)
-	}
-	if file.Size != int64(len(file.B64Data)) {
-		return data, fmt.Errorf("File size %d does not match base64 data length %d", file.Size, len(file.B64Data))
 	}
 	if strings.HasPrefix(file.B64Data, CompressedFilePrefix) {
 		encodedData := file.B64Data[5:]
@@ -106,6 +105,11 @@ func (f *FileManager) VerifyExtract(file *ExtractedFile) ([]byte, error) {
 	if len(data) == 0 {
 		return data, fmt.Errorf("File %s has no data after verification", file.Fullname)
 	}
+	// Last check to ensure the size matches
+	if int64(len(data)) != file.Size {
+		return data, fmt.Errorf("File %s size mismatch: expected %d, got %d", file.Fullname, file.Size, len(data))
+	}
+	log.Printf("File %s verified successfully", file.Fullname)
 	return data, nil
 }
 

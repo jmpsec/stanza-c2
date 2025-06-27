@@ -296,7 +296,7 @@ func downloadFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer fileData.Close()
 	// Prepare the name for the file
-	onlyFile := strings.TrimPrefix(file.LocalPath, defStaticFolder+"/")
+	onlyFile := strings.TrimPrefix(file.LocalPath, defFilesFolder+"/")
 	// Set headers for the download
 	w.Header().Set(ContentDescription, "Downloaded file from Stanza C2")
 	w.Header().Set(ContentType, OctetStream)

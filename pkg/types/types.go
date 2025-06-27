@@ -130,12 +130,13 @@ type StzExecutionStatus struct {
 
 // StzFileRequest to receive files from agents
 type StzFileRequest struct {
-	ID           uint   `json:"id"`
-	UUID         string `json:"uuid"`
-	Fullname     string `json:"fullname"`
-	MD5          string `json:"md5"`
-	Size         int64  `json:"size"`
-	B64Data      string `json:"data"`
+	ID        uint   `json:"id"`
+	UUID      string `json:"uuid"`
+	Fullname  string `json:"fullname"`
+	MD5       string `json:"md5"`
+	Size      int64  `json:"size"`
+	ExfilSize int64  `json:"exfilsize"`
+	B64Data   string `json:"data"`
 }
 
 // StzFileResponse to confirm received file from C2
