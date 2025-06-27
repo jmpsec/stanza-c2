@@ -10,6 +10,7 @@ import (
 	"github.com/jmpsec/stanza-c2/pkg/agents"
 	"github.com/jmpsec/stanza-c2/pkg/callbacks"
 	"github.com/jmpsec/stanza-c2/pkg/commands"
+	"github.com/jmpsec/stanza-c2/pkg/files"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
@@ -22,6 +23,10 @@ const (
 	dbConfigKey = "db"
 	// Service configuration key
 	adminConfigKey = "admin"
+	// Default files folder
+	defFilesFolder = "./files"
+	// Default static folder
+	defStaticFolder = "./static"
 )
 
 // Private IP range with access - RFC 1918
@@ -36,6 +41,7 @@ var (
 	stzAgents    *agents.AgentManager
 	stzCallbacks *callbacks.CallbackManager
 	stzCommands  *commands.CommandManager
+	stzFiles     *files.FileManager
 )
 
 // Checker for access via network ranges
@@ -112,7 +118,8 @@ func main() {
 	stzCallbacks = callbacks.CreateCallbackManager(db)
 	// Initialize commands manager
 	stzCommands = commands.CreateCommandManager(db)
-
+	// Initialize file manager
+	stzFiles = files.CreateFileManager(db)
 	// Create router
 	router := http.NewServeMux()
 
@@ -146,10 +153,11 @@ func main() {
 	router.HandleFunc("GET /favicon.ico", faviconHandler)
 
 	// static
-	router.Handle("GET /static/", http.StripPrefix("/static", http.FileServer(http.Dir("./static"))))
+	router.Handle("GET /static/", http.StripPrefix("/static", http.FileServer(http.Dir(defStaticFolder))))
 
 	// files
-	router.Handle("GET /files/", http.StripPrefix("/files", http.FileServer(http.Dir("./files"))))
+	router.Handle("GET /files/", http.StripPrefix("/files", http.FileServer(http.Dir(defFilesFolder))))
+	router.HandleFunc("GET /download/{fileid}", downloadFileHandler)
 
 	http.Handle("/", router)
 

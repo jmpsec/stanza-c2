@@ -9,6 +9,7 @@ import (
 	"github.com/jmpsec/stanza-c2/pkg/agents"
 	"github.com/jmpsec/stanza-c2/pkg/callbacks"
 	"github.com/jmpsec/stanza-c2/pkg/commands"
+	"github.com/jmpsec/stanza-c2/pkg/files"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
@@ -33,6 +34,8 @@ const (
 	dbConfigKey = "db"
 	// Service configuration key
 	httpConfigKey = "http"
+	// Default files folder
+	defFilesFolder = "./files"
 )
 
 // Global variables
@@ -44,6 +47,7 @@ var (
 	stzAgents    *agents.AgentManager
 	stzCallbacks *callbacks.CallbackManager
 	stzCommands  *commands.CommandManager
+	stzFiles     *files.FileManager
 )
 
 // Function to load the configuration file and assign to variables
@@ -107,6 +111,8 @@ func main() {
 	stzCallbacks = callbacks.CreateCallbackManager(db)
 	// Initialize commands manager
 	stzCommands = commands.CreateCommandManager(db)
+	// Initialize file manager
+	stzFiles = files.CreateFileManager(db)
 
 	// Check if callbacks/endpoints are set by the JSON host
 	if !stzCallbacks.CheckByHost(httpConfig.Host) {
@@ -143,7 +149,7 @@ func main() {
 	router.HandleFunc("POST "+callbacksPath, callbacksHTTPHandler)
 
 	// files
-	router.Handle("GET /files/", http.StripPrefix("/files", http.FileServer(http.Dir("./files"))))
+	router.Handle("GET /files/", http.StripPrefix("/files", http.FileServer(http.Dir(defFilesFolder))))
 	router.HandleFunc("POST "+filesPath, filesHTTPHandler)
 
 	http.Handle("/", router)

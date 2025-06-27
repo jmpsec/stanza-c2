@@ -44,6 +44,8 @@ const (
 	StzStatusReceived = "STZ_RECEIVED"
 	// StzStatusBeacon
 	StzStatusBeacon = "STZ_BEACON"
+	// StzStatusError
+	StzStatusError = "STZ_ERROR"
 )
 
 // StzCallback for methods to communicate with C2
@@ -126,13 +128,15 @@ type StzExecutionStatus struct {
 	Data   string `json:"data"`
 }
 
-// StzFileSent to receive files from agents
-type StzFileSent struct {
-	UUID     string `json:"uuid"`
-	Fullname string `json:"fullname"`
-	MD5      string `json:"md5"`
-	Bytes    int    `json:"bytes"`
-	Data     string `json:"data"`
+// StzFileRequest to receive files from agents
+type StzFileRequest struct {
+	ID        uint   `json:"id"`
+	UUID      string `json:"uuid"`
+	Fullname  string `json:"fullname"`
+	MD5       string `json:"md5"`
+	Size      int64  `json:"size"`
+	ExfilSize int64  `json:"exfilsize"`
+	B64Data   string `json:"data"`
 }
 
 // StzFileResponse to confirm received file from C2

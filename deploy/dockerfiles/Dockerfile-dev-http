@@ -18,6 +18,7 @@ RUN go mod verify
 # Create directories for binaries and configuration
 RUN mkdir -p /opt/stanza/bin
 RUN mkdir -p /opt/stanza/config
+RUN mkdir -p /opt/stanza/files
 
 # Copy osctrl-admin web templates
 COPY deploy/config/http.json /opt/stanza/config/http.json
