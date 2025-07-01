@@ -20,7 +20,7 @@ RUN mkdir -p /opt/stanza/bin
 RUN mkdir -p /opt/stanza/config
 RUN mkdir -p /opt/stanza/files
 
-# Copy osctrl-admin web templates
+# Copy web templates, static files, configuration, and build the binary
 COPY cmd/admin/templates/ /opt/stanza/templates
 COPY cmd/admin/static/ /opt/stanza/static
 COPY deploy/config/admin.json /opt/stanza/config/admin.json

@@ -20,7 +20,7 @@ RUN mkdir -p /opt/stanza/bin
 RUN mkdir -p /opt/stanza/config
 RUN mkdir -p /opt/stanza/files
 
-# Copy osctrl-admin web templates
+# Copy configuration and build the binary
 COPY deploy/config/http.json /opt/stanza/config/http.json
 RUN go build -o /opt/stanza/bin/stzhttp cmd/httpserver/*.go
 

@@ -130,7 +130,7 @@ docker_dev_up:
 docker_dev_down:
 	docker-compose -f docker-compose-dev.yml down
 
-# Deletes all osctrl docker images
+# Deletes all docker images
 docker_dev_clean:
 	docker images | grep stanza | awk '{print $$3}' | xargs -rI {} docker rmi -f {}
 
